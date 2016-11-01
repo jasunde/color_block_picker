@@ -1,6 +1,5 @@
 $(document).ready(function () {
-  var question = '',
-      colors = [
+  var colors = [
         {name: 'red', value: 'red'},
         {name: 'green', value: 'green'},
         {name: 'yellow', value: 'yellow'},
@@ -9,9 +8,19 @@ $(document).ready(function () {
       $question = $('#question'),
       $colors = $('.color');
 
+  // Add colors to divs
   $colors.each(function (i) {
     this.style.backgroundColor = colors[i].value;
   });
+
+  // Start the game by asking the first question
+  askColor(randomColor(colors).name, $question);
+
+  // String, jQuery object -> void
+  // Change text of jQuery object to question about color
+  function askColor(color, $q) {
+    $q.text('Can you click on ' + color + '?');
+  }
 
   // Colors Array -> Color Object
   // Returns a random color selected from the given array of colors
@@ -23,9 +32,5 @@ $(document).ready(function () {
   // Returns a random integer given a minimum and maximum integer
   function randomNumber(min, max) {
     return Math.floor(Math.random() * (1 + max - min) + min);
-  }
-
-  for (var i = 0; i < 20; i++) {
-    console.log(randomColor(colors).name);
   }
 });
