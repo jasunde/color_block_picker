@@ -3,23 +3,49 @@ $(document).ready(function () {
         {name: 'red', value: 'red'},
         {name: 'green', value: 'green'},
         {name: 'yellow', value: 'yellow'},
-        {name: 'blue', value: 'blue'}
+        {name: 'blue', value: 'blue'},
+        {name: 'purple', value: 'purple'}
       ],
       $question = $('#question'),
-      $colors = $('.color');
+      $colors = $('#colors'),
+      $feedback = $('#feedback'),
+      winningColor = '';
 
-  // Add colors to divs
-  $colors.each(function (i) {
-    this.style.backgroundColor = colors[i].value;
+  // Add colored divs
+  colors.forEach(function (color) {
+    var $newColor = $('<div></div>')
+      .css('background-color', color.value)
+      .addClass('color')
+      .data('color', color.name);
+
+    $colors.append($newColor);
   });
 
   // Start the game by asking the first question
-  askColor(randomColor(colors).name, $question);
+  winningColor = askColor(colors, $question);
 
-  // String, jQuery object -> void
+  // Listen for a click on a color
+  $colors.on('click', '.color', function (event) {
+    if(isWinner(this)) {
+      $feedback.text('You got it!');
+      winningColor = askColor(colors, $question);
+    } else {
+      $feedback.text('Oops... Try again!')
+    }
+  });
+
+  // HTML Element -> Boolean
+  function isWinner(element) {
+    return $(element).data('color') == winningColor;
+  }
+
+  // Array, jQuery object -> String
   // Change text of jQuery object to question about color
-  function askColor(color, $q) {
+  // Return color name
+  function askColor(colors, $q) {
+    var color = randomColor(colors).name;
     $q.text('Can you click on ' + color + '?');
+    return color;
   }
 
   // Colors Array -> Color Object

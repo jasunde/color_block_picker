@@ -2,8 +2,12 @@ body {
   margin: 0;
 }
 
+#colors {
+  overflow: auto;
+}
+
 .color {
   float: left;
-  height: 50vh;
-  width: 25%;
+  height: 25vh;
+  width: 25vw;
 }
