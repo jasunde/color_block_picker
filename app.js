@@ -13,7 +13,7 @@ $(document).ready(function () {
       sequence = [],
       currentSequence = [],
       roundTimer,
-      speed = 3000,
+      speed = 1500,
       gameOn = true;
 
   // Add colored divs
@@ -28,6 +28,7 @@ $(document).ready(function () {
 
   // Start the game by asking the first question
   startRound();
+  // playSequence(["red", "yellow", "red", "blue"]);
 
   // Listen for a click on a color
   $colors.on('click', '.color', function (event) {
@@ -36,13 +37,13 @@ $(document).ready(function () {
         clearTimeout(roundTimer);
         cueColor(this);
         $feedback.text('You got it!');
-        setTimeout(function () {
-          if(currentSequence.length > 0) {
-            currentSequence = nextColor(currentSequence);
-          } else {
-            startRound();
-          }
-        }, 2000);
+
+        if(currentSequence.length > 0) {
+          gameOn = false;
+          nextColor(currentSequence);
+        } else {
+          setTimeout(startRound, speed);
+        }
       } else {
         $feedback.text('Oops... Try again!')
       }
@@ -55,8 +56,6 @@ $(document).ready(function () {
     sequence.push(pickColor(colors));
     currentSequence = sequence.slice();
     playSequence(currentSequence);
-    currentSequence = sequence.slice();
-    currentSequence = nextColor(currentSequence);
   }
 
   // void -> void
@@ -65,31 +64,42 @@ $(document).ready(function () {
     $feedback.text('Game Over');
   }
 
-  // void -> void
-  function playSequence(sequence) {
-    sequence.forEach(function (color) {
-        $color = $colors.find('.color');
+  // Color Array -> void
+  // Lights each color in sequence for the give Array
+  // Calls nextColor when no elements left in Color Array
+  function playSequence(thisSequence) {
 
-        for (var i = 0; i < $color.length; i++) {
-          var currentColor = $($color[i]);
-          if(currentColor.data('color') === color) {
-            var element = currentColor;
-          }
+    console.log(thisSequence);
+    gameOn = false;
+    if(thisSequence.length) {
+      var color = thisSequence.shift();
+      $color = $colors.find('.color');
+
+      for (var i = 0; i < $color.length; i++) {
+        var currentColor = $($color[i]);
+        if(currentColor.data('color') === color) {
+          var element = currentColor;
         }
-        cueColor(element[0]);
-    });
+      }
+      cueColor(element[0]);
+      setTimeout(playSequence, speed, thisSequence);
+    } else {
+      currentSequence = sequence.slice();
+      gameOn = true;
+      $feedback.text('Go!!!')
+      nextColor(currentSequence);
+    }
   }
 
   // Array -> Array
   // Start the countdown for the next color in the color sequence
   function nextColor(array) {
-    console.log(sequence, currentSequence);
     winningColor = askColor(array.shift(), $question);
+    gameOn = true;
     roundTimer = setTimeout(function () {
       gameOver();
     }, speed);
-    // console.log(sequence, array);
-    return array;
+    // return array;
   }
 
   // HTML Element -> Boolean
@@ -104,7 +114,7 @@ $(document).ready(function () {
     $(el).addClass('saturate');
     setTimeout(function () {
       $(el).removeClass('saturate');
-    }, 2000);
+    }, speed * .9);
   }
 
   // String, jQuery object -> String
