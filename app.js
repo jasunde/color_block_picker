@@ -1,10 +1,10 @@
 $(document).ready(function () {
   var colors = [
-        {name: 'red', value: 'red'},
+        {name: 'red', value: 'hsl(0, 60%, 50%)'},
         {name: 'green', value: 'green'},
-        {name: 'yellow', value: 'yellow'},
-        {name: 'blue', value: 'blue'},
-        {name: 'purple', value: 'purple'}
+        {name: 'yellow', value: 'hsl(60, 80%, 50%)'},
+        {name: 'blue', value: 'hsl(240, 40%, 50%)'},
+        // {name: 'purple', value: 'purple'}
       ],
       $question = $('#question'),
       $colors = $('#colors'),
@@ -27,8 +27,11 @@ $(document).ready(function () {
   // Listen for a click on a color
   $colors.on('click', '.color', function (event) {
     if(isWinner(this)) {
+      cueColor(this);
       $feedback.text('You got it!');
-      winningColor = askColor(colors, $question);
+      setTimeout(function () {
+        winningColor = askColor(colors, $question);
+      }, 2000);
     } else {
       $feedback.text('Oops... Try again!')
     }
@@ -37,6 +40,15 @@ $(document).ready(function () {
   // HTML Element -> Boolean
   function isWinner(element) {
     return $(element).data('color') == winningColor;
+  }
+
+  // HTML Element -> void
+  // Alter the background-color of HTML Element
+  function cueColor(el) {
+    $(el).addClass('saturate');
+    setTimeout(function () {
+      $(el).removeClass('saturate');
+    }, 2000);
   }
 
   // Array, jQuery object -> String
