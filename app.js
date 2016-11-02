@@ -9,7 +9,12 @@ $(document).ready(function () {
       $question    = $('#question'),
       $colors      = $('#colors'),
       $feedback    = $('#feedback'),
-      winningColor = '';
+      winningColor = '',
+      sequence = [],
+      currentSequence = [],
+      roundTimer,
+      speed = 3000,
+      gameOn = true;
 
   // Add colored divs
   colors.forEach(function (color) {
@@ -22,20 +27,70 @@ $(document).ready(function () {
   });
 
   // Start the game by asking the first question
-  winningColor = askColor(colors, $question);
+  startRound();
 
   // Listen for a click on a color
   $colors.on('click', '.color', function (event) {
-    if(isWinner(this)) {
-      cueColor(this);
-      $feedback.text('You got it!');
-      setTimeout(function () {
-        winningColor = askColor(colors, $question);
-      }, 2000);
-    } else {
-      $feedback.text('Oops... Try again!')
+    if(gameOn) {
+      if(isWinner(this)) {
+        clearTimeout(roundTimer);
+        cueColor(this);
+        $feedback.text('You got it!');
+        setTimeout(function () {
+          if(currentSequence.length > 0) {
+            currentSequence = nextColor(currentSequence);
+          } else {
+            startRound();
+          }
+        }, 2000);
+      } else {
+        $feedback.text('Oops... Try again!')
+      }
     }
   });
+
+  // void -> void
+  // Start a round
+  function startRound() {
+    sequence.push(pickColor(colors));
+    currentSequence = sequence.slice();
+    playSequence(currentSequence);
+    currentSequence = sequence.slice();
+    currentSequence = nextColor(currentSequence);
+  }
+
+  // void -> void
+  function gameOver() {
+    gameOn = false;
+    $feedback.text('Game Over');
+  }
+
+  // void -> void
+  function playSequence(sequence) {
+    sequence.forEach(function (color) {
+        $color = $colors.find('.color');
+
+        for (var i = 0; i < $color.length; i++) {
+          var currentColor = $($color[i]);
+          if(currentColor.data('color') === color) {
+            var element = currentColor;
+          }
+        }
+        cueColor(element[0]);
+    });
+  }
+
+  // Array -> Array
+  // Start the countdown for the next color in the color sequence
+  function nextColor(array) {
+    console.log(sequence, currentSequence);
+    winningColor = askColor(array.shift(), $question);
+    roundTimer = setTimeout(function () {
+      gameOver();
+    }, speed);
+    // console.log(sequence, array);
+    return array;
+  }
 
   // HTML Element -> Boolean
   // Returns true if element color matches winning color
@@ -52,15 +107,18 @@ $(document).ready(function () {
     }, 2000);
   }
 
-  // Array, jQuery object -> String
+  // String, jQuery object -> String
   // Change text of jQuery object to question about color
-  // Return color name
-  function askColor(colors, $q) {
-    var color = randomColor(colors).name;
+  function askColor(color, $q) {
     $q.text('Can you click on ' + color + '?');
     return color;
   }
 
+  // Colors Array -> String
+  // Returns a random color from the colors array
+  function pickColor(colors) {
+    return randomColor(colors).name;
+  }
   // Colors Array -> Color Object
   // Returns a random color selected from the given array of colors
   function randomColor(colors) {

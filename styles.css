@@ -8,12 +8,12 @@ body {
 
 .color {
   float: left;
-  height: 25vh;
+  height: 25vw;
   width: 25vw;
 }
 
 .saturate {
-  -webkit-animation: saturate 2s;
+  -webkit-animation: saturate .5s;
 }
 
 @-webkit-keyframes saturate {
