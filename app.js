@@ -6,9 +6,9 @@ $(document).ready(function () {
         {name: 'blue', value: 'hsl(240, 40%, 50%)'},
         // {name: 'purple', value: 'purple'}
       ],
-      $question = $('#question'),
-      $colors = $('#colors'),
-      $feedback = $('#feedback'),
+      $question    = $('#question'),
+      $colors      = $('#colors'),
+      $feedback    = $('#feedback'),
       winningColor = '';
 
   // Add colored divs
@@ -38,6 +38,7 @@ $(document).ready(function () {
   });
 
   // HTML Element -> Boolean
+  // Returns true if element color matches winning color
   function isWinner(element) {
     return $(element).data('color') == winningColor;
   }
